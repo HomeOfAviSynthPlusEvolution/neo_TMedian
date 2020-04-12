@@ -59,6 +59,12 @@ struct DSFormat
     BytesPerSample = BitsPerSample == 8 ? 1 : BitsPerSample == 32 ? 4 : 2;
     IsInteger = BitsPerSample < 32;
     IsFloat = BitsPerSample == 32;
+    if (IsFamilyYUV && (format & VideoInfo::CS_GENERIC_Y) == VideoInfo::CS_GENERIC_Y)
+      Planes = 1;
+    else if (IsFamilyYUV && (format & VideoInfo::CS_YUVA) == VideoInfo::CS_YUVA)
+      Planes = 4;
+    else if (IsFamilyRGB && (format & VideoInfo::CS_RGBA_TYPE) == VideoInfo::CS_RGBA_TYPE)
+      Planes = 4;
   }
 
   int ToAVSFormat() const
