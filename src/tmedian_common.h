@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <immintrin.h>
 #include <smmintrin.h>
-#include <immintrin.h>
+#include <stdint.h>
 
 #define MAX_FRAMES 13
 
