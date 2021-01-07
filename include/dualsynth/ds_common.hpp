@@ -15,6 +15,7 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
+#include <mutex>
 #include "ds_format.hpp"
 #include "ds_videoinfo.hpp"
 #include "ds_frame.hpp"
@@ -26,7 +27,7 @@ std::vector<register_avsfilter_proc> RegisterAVSFilters();
 
 enum ParamType
 {
-  Clip, Integer, Float, Boolean
+  Clip, Integer, Float, Boolean, String
 };
 
 struct Param
@@ -46,6 +47,7 @@ struct InDelegator
   virtual void Read(const char* name, float& output) = 0;
   virtual void Read(const char* name, double& output) = 0;
   virtual void Read(const char* name, bool& output) = 0;
+  virtual void Read(const char* name, std::string& output) = 0;
   virtual void Read(const char* name, std::vector<int>& output) = 0;
   virtual void Read(const char* name, std::vector<int64_t>& output) = 0;
   virtual void Read(const char* name, std::vector<float>& output) = 0;

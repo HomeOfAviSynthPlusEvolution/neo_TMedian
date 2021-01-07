@@ -44,6 +44,10 @@ namespace VSInterface {
       auto output_int = _vsapi->propGetInt(_in, name, 0, &_err);
       if (!_err) output = output_int != 0;
     }
+    void Read(const char* name, std::string& output) override {
+      auto output_str = _vsapi->propGetData(_in, name, 0, &_err);
+      if (!_err) output = output_str;
+    }
     void Read(const char* name, std::vector<int>& output) override {
       auto size = _vsapi->propNumElements(_in, name);
       if (size < 0) return;
@@ -93,14 +97,11 @@ namespace VSInterface {
     VSNodeRef *_vs_clip;
     VSCore *_core;
     const VSAPI *_vsapi;
-    VSFrameContext *_frameCtx {nullptr};
+    VSFrameContext *_frameCtx;
     VSFetchFrameFunctor(VSNodeRef *clip, VSCore *core, const VSAPI *vsapi)
       : _vs_clip(clip), _core(core), _vsapi(vsapi) {}
     DSFrame operator()(int n) override {
-      if (_frameCtx)
-        return DSFrame(_vsapi->getFrameFilter(n, _vs_clip, _frameCtx), _core, _vsapi);
-      else
-        return DSFrame(_vsapi->getFrame(n, _vs_clip, nullptr, 0), _core, _vsapi);
+      return DSFrame(_vsapi->getFrameFilter(n, _vs_clip, _frameCtx), _core, _vsapi);
     }
     ~VSFetchFrameFunctor() override {
       _vsapi->freeNode(_vs_clip);
@@ -163,9 +164,9 @@ namespace VSInterface {
   void VS_CC Create(const VSMap *in, VSMap *out, void *userData, VSCore *core, const VSAPI *vsapi) {
     auto filter = new FilterType{};
     auto argument = VSInDelegator(in, vsapi);
-    VSFetchFrameFunctor* functor = nullptr;
     try {
       void* clip = nullptr;
+      VSFetchFrameFunctor* functor = nullptr;
       DSVideoInfo input_vi;
       try {
         argument.Read("clip", clip);
@@ -183,7 +184,6 @@ namespace VSInterface {
       char msg_buff[256];
       snprintf(msg_buff, 256, "%s: %s", filter->VSName(), err);
       vsapi->setError(out, msg_buff);
-      delete functor;
       delete filter;
     }
   }

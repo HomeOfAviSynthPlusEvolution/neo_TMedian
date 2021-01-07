@@ -29,6 +29,7 @@ struct Filter
         case Integer: type_name = "int"; break;
         case Float: type_name = "float"; break;
         case Boolean: type_name = "int"; break;
+        case String: type_name = "data"; break;
       }
       ss << p.Name << ':' << type_name;
       if (p.IsArray)
@@ -52,6 +53,7 @@ struct Filter
         case Integer: type_name = 'i'; break;
         case Float: type_name = 'f'; break;
         case Boolean: type_name = 'b'; break;
+        case String: type_name = 's'; break;
       }
       if (p.IsOptional)
         ss << '[' << p.Name << ']';
